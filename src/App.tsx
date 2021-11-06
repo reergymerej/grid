@@ -40,53 +40,65 @@ const initialAmanda: types.Actor = {
 
 const App: React.FC = () => {
   const [cells, setCells] = React.useState<types.Cells>(initalCells)
-  const [actors, setActors] = React.useState<types.Actor[]>([initialAmanda])
+  const [activeActor, setActiveActor] = React.useState<types.Actor>(initialAmanda)
+  const [actors, setActors] = React.useState<types.Actor[]>([])
 
   React.useEffect(() => {
     const nextCells: types.Cells = clearGrid(cells)
     actors.forEach((actor) => {
       nextCells[actor.y][actor.x].value = actor.value
     })
+    nextCells[activeActor.y][activeActor.x].value = activeActor.value
     setCells(nextCells)
-  }, [actors])
+  }, [activeActor, actors/*, cells*/])
+
+  const stopControl = (actor: types.Actor) => {
+    setActors([...actors, actor])
+    setActiveActor({
+      value: 'amanda',
+      x: 0,
+      y: 0,
+      my: 0,
+      mx: 0,
+    })
+  }
 
   const handleDown = React.useCallback(() => {
-    const amanda = actors[0]
     const bottom = cells.length
-    const canMove = amanda.y + 1 < bottom
+    const canMove = activeActor.y + 1 < bottom
     if (!canMove) {
-      console.log('dang')
+      stopControl(activeActor)
     } else {
-      amanda.y = amanda.y + 1
-      setActors([
-        amanda,
-      ])
+      setActiveActor({
+        ...activeActor,
+        y: activeActor.y + 1
+      })
     }
-  }, [actors])
+  }, [activeActor, cells.length])
 
   const handleRight = React.useCallback(() => {
-    const amanda = actors[0]
+    const actor = activeActor
     const right = cells[0].length
-    const canMove = amanda.x + 1 < right
+    const canMove = actor.x + 1 < right
     if (canMove) {
-      amanda.x = amanda.x + 1
-      setActors([
-        amanda,
-      ])
+      setActiveActor({
+        ...activeActor,
+        x: activeActor.x + 1
+      })
     }
-  }, [actors])
+  }, [activeActor, cells])
 
   const handleLeft = React.useCallback(() => {
-    const amanda = actors[0]
+    const actor = activeActor
     const left = 0
-    const canMove = amanda.x - 1 >= left
+    const canMove = actor.x - 1 >= left
     if (canMove) {
-      amanda.x = amanda.x - 1
-      setActors([
-        amanda,
-      ])
+      setActiveActor({
+        ...activeActor,
+        x: activeActor.x - 1
+      })
     }
-  }, [actors])
+  }, [activeActor])
 
   const keydownHandler = React.useCallback((event: KeyboardEvent) => {
       switch (event.key) {
