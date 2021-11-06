@@ -110,56 +110,42 @@ export const setCellsForActor = (grid: types.Grid, actor: types.Actor): types.Gr
   return grid
 }
 
-const cellIsEmpty = (cell: types.Cell): boolean => {
+const cellIsAvailable = (cell: types.Cell): boolean => {
   return cell.value === undefined
     || cell.value === 'collision'
+}
+
+const canMoveIntoCollisionArea = (grid: types.Grid, collisionArea: types.Cell[]): boolean => {
+  let insideBoundary = true
+  let noCollisions = true
+  for (let i = 0; i < collisionArea.length; i++) {
+    const cell = collisionArea[i]
+    const gridCell = gridReference(grid, cell.x, cell.y)
+    insideBoundary = insideBoundary && gridCell !== undefined
+    if (gridCell) {
+      noCollisions = noCollisions && cellIsAvailable(gridCell)
+    }
+    if (!insideBoundary || !noCollisions) {
+      return false
+    }
+  }
+  return true
 }
 
 export const canMoveDown = (
   grid: types.Grid,
   actor: types.Actor,
 ): boolean => {
-    const { y } = actor
-    const speed = 1
-    const nextY = y + speed
-
-    const bottom = grid.length - 3
-    if (nextY > bottom) {
-      return false
-    }
-
     const collisionArea = getActorCollisionBottom(actor)
-    let noCollisions = true
-    collisionArea.forEach((cell) => {
-      const gridCell = gridReference(grid, cell.x, cell.y)
-      if (gridCell) {
-        noCollisions = noCollisions && cellIsEmpty(gridCell)
-      }
-    })
-    return noCollisions
+    return canMoveIntoCollisionArea(grid, collisionArea)
 }
 
 export const canMoveLeft = (
   grid: types.Grid,
   actor: types.Actor,
 ): boolean => {
-    const { y, x } = actor
-    const speed = -1
-    const nextX = x + speed
-
-    if (nextX < 0) {
-      return false
-    }
-
     const collisionArea = getActorCollisionLeft(actor)
-    let noCollisions = true
-    collisionArea.forEach((cell) => {
-      const gridCell = gridReference(grid, cell.x, cell.y)
-      if (gridCell) {
-        noCollisions = noCollisions && cellIsEmpty(gridCell)
-      }
-    })
-    return noCollisions
+    return canMoveIntoCollisionArea(grid, collisionArea)
 }
 
 export const canMoveRight = (
@@ -167,23 +153,5 @@ export const canMoveRight = (
   actor: types.Actor,
 ): boolean => {
     const collisionArea = getActorCollisionRight(actor)
-
-    let insideBoundary = true
-    collisionArea.forEach((cell) => {
-      const gridCell = gridReference(grid, cell.x, cell.y)
-      insideBoundary = insideBoundary && gridCell !== undefined
-    })
-
-    if (!insideBoundary) {
-      return false
-    }
-
-    let noCollisions = true
-    collisionArea.forEach((cell) => {
-      const gridCell = gridReference(grid, cell.x, cell.y)
-      if (gridCell) {
-        noCollisions = noCollisions && cellIsEmpty(gridCell)
-      }
-    })
-    return noCollisions
+    return canMoveIntoCollisionArea(grid, collisionArea)
 }
