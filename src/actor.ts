@@ -1,33 +1,80 @@
 import {setCellIfPresent, setCellIfPresentByCell} from './grid';
 import * as types from './types';
 
+const getBottomNorth = (actor: types.Actor): types.Cell[] => {
+  const center = getCenter(ell)
+  const relativeMap = getRelativeMap(ell, center)
+  // key is x
+  const lowestRowPerColumn: {[key: string]: number} = {}
+  relativeMap.forEach(coords => {
+    const currentFurthest = lowestRowPerColumn[coords.x]
+    if (currentFurthest === undefined) {
+      lowestRowPerColumn[coords.x] = coords.y
+    } else {
+      if (coords.y > currentFurthest) {
+        lowestRowPerColumn[coords.x] = coords.y
+      }
+    }
+  })
+  const result = Object.keys(lowestRowPerColumn).map(x => {
+    const y = lowestRowPerColumn[x]
+    return {
+      value: 'collision',
+      x: actor.x + parseInt(x),
+      y: actor.y + y + 1,
+    }
+  })
+  return result
+}
+
+const getLeftNorth = (actor: types.Actor): types.Cell[] => {
+  // return [
+  //   {
+  //     value: 'collision',
+  //     x: actor.x - 1,
+  //     y: actor.y,
+  //   },
+  //   {
+  //     value: 'collision',
+  //     x: actor.x - 1,
+  //     y: actor.y + 1,
+  //   },
+  //   {
+  //     value: 'collision',
+  //     x: actor.x - 1,
+  //     y: actor.y + 2,
+  //   },
+  // ]
+  const center = getCenter(ell)
+  const relativeMap = getRelativeMap(ell, center)
+  // key is y
+  const furthestPerRow: {[key: string]: number} = {}
+  relativeMap.forEach(coords => {
+    const currentFurthest = furthestPerRow[coords.y]
+    if (currentFurthest === undefined) {
+      furthestPerRow[coords.y] = coords.x
+    } else {
+      if (coords.y < currentFurthest) {
+        furthestPerRow[coords.y] = coords.x
+      }
+    }
+  })
+
+  const result = Object.keys(furthestPerRow).map(y => {
+    const x = furthestPerRow[y]
+    return {
+      value: 'collision',
+      x: actor.x + x - 1,
+      y: actor.y + parseInt(y),
+    }
+  })
+  return result
+}
+
 export const getActorCollisionBottom = (actor: types.Actor): types.Cell[] => {
   switch (actor.orientation) {
-    case types.Orientation.north: {
-      const center = getCenter(ell)
-      const relativeMap = getRelativeMap(ell, center)
-      // get furthest bottom for each column
-      const lowestRowPerColumn: {[key: string]: number} = {}
-      relativeMap.forEach(coords => {
-        const currentLowest = lowestRowPerColumn[coords.x]
-        if (currentLowest === undefined) {
-          lowestRowPerColumn[coords.x] = coords.y
-        } else {
-          if (coords.y > currentLowest) {
-            lowestRowPerColumn[coords.x] = coords.y
-          }
-        }
-      })
-      const result = Object.keys(lowestRowPerColumn).map(x => {
-        const y = lowestRowPerColumn[x]
-        return {
-          value: 'collision',
-          x: actor.x + parseInt(x),
-          y: actor.y + y + 1,
-        }
-      })
-      return result
-    }
+    case types.Orientation.north:
+      return getBottomNorth(actor)
     case types.Orientation.east:
       return [
           {
@@ -52,23 +99,12 @@ export const getActorCollisionBottom = (actor: types.Actor): types.Cell[] => {
 }
 
 export const getActorCollisionLeft = (actor: types.Actor): types.Cell[] => {
-  return [
-    {
-      value: 'collision',
-      x: actor.x - 1,
-      y: actor.y,
-    },
-    {
-      value: 'collision',
-      x: actor.x - 1,
-      y: actor.y + 1,
-    },
-    {
-      value: 'collision',
-      x: actor.x - 1,
-      y: actor.y + 2,
-    },
-  ]
+  switch (actor.orientation) {
+    case types.Orientation.north:
+      return getLeftNorth(actor)
+    default:
+      throw new Error(`unhandled case "${types.Orientation[actor.orientation]}"`)
+  }
 }
 
 export const getActorCollisionRight = (actor: types.Actor): types.Cell[] => {
@@ -94,7 +130,7 @@ export const getActorCollisionRight = (actor: types.Actor): types.Cell[] => {
 const showCollisionZones = (grid: types.Grid, actor: types.Actor): types.Grid => {
   const zones: types.Cell[][] = [
     getActorCollisionBottom(actor),
-    // getActorCollisionLeft(actor),
+    getActorCollisionLeft(actor),
     // getActorCollisionRight(actor),
   ]
   zones.forEach((zone) => {
