@@ -9,20 +9,17 @@ export const setCellsForActor = (grid: types.Grid, actor: types.Actor): types.Gr
   grid = setCellIfPresent(grid, actor.x, actor.y + 2, actor.value)
   grid = setCellIfPresent(grid, actor.x + 1, actor.y + 2, actor.value)
 
-  if (actor.isActive) {
-    const collisionBottom = getActorCollisionBottom(actor)
-    collisionBottom.forEach((cell) => {
-      grid = setCellIfPresentByCell(grid, cell)
-    })
-
-    const collisionLeft = getActorCollisionLeft(actor)
-    collisionLeft.forEach((cell) => {
-      grid = setCellIfPresentByCell(grid, cell)
-    })
-
-    const collisionRight = getActorCollisionRight(actor)
-    collisionRight.forEach((cell) => {
-      grid = setCellIfPresentByCell(grid, cell)
+  const shouldShowCollisionZone = actor.isActive
+  if (shouldShowCollisionZone) {
+    const zones: types.Cell[][] = [
+      getActorCollisionBottom(actor),
+      getActorCollisionLeft(actor),
+      getActorCollisionRight(actor),
+    ]
+    zones.forEach((zone) => {
+      zone.forEach((cell) => {
+        grid = setCellIfPresentByCell(grid, cell)
+      })
     })
   }
   return grid
