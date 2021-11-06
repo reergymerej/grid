@@ -1,58 +1,33 @@
 import React from 'react';
 import './App.css';
+import Grid from './Grid';
+import {Cells} from './types';
 
-const Cell: React.FC  = ({children}) => (
-  <div className="Cell">
-    {children}
-  </div>
-)
-
-type RowProps = {
-  cols: number;
-  number?: number;
-}
-
-const Row: React.FC<RowProps> = ({number, cols}) => {
-  const cells = []
-  while (cells.length < cols) {
-    cells.push(
-      <Cell>
-        {number !== undefined && number + ", "} {cells.length}
-      </Cell>
-    )
+const cells: Cells = []
+const rows = 19
+const cols = 8
+while (cells.length < rows) {
+  const row = []
+  while (row.length < cols) {
+    row.push({
+      x: row.length,
+      y: cells.length,
+      value: undefined,
+    })
   }
-  return (
-    <div className="Row">
-      { cells }
-    </div>
-  )
+  cells.push(row)
 }
 
-type GridProps = {
-  rows: number;
-  cols: number;
-}
 
-const Grid: React.FC<GridProps> = ({ rows, cols }) => {
-  const r = []
-  while (r.length < rows) {
-    r.push(
-      <Row number={r.length} cols={cols} />
-    )
-  }
-  return (
-    <div className="Grid">
-      {r}
-    </div>
-  )
-}
+cells[3][2].value = 'dot'
+cells[4][4].value = 'bloop'
 
-function App() {
+const App: React.FC = () => {
+  console.log(cells)
   return (
     <div className="App">
       <Grid
-        cols={8}
-        rows={19}
+        cells={cells}
       />
     </div>
   );
