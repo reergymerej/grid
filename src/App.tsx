@@ -4,8 +4,8 @@ import Grid from './Grid';
 import * as types from './types';
 
 const initalCells: types.Cells = []
-const rows = 15
-const cols = 9
+const rows = 24
+const cols = 15
 while (initalCells.length < rows) {
   const row = []
   while (row.length < cols) {
@@ -45,33 +45,47 @@ const App: React.FC = () => {
   React.useEffect(() => {
     const nextCells: types.Cells = clearGrid(cells)
     actors.forEach((actor) => {
-      nextCells[actor.y + actor.my][actor.x + actor.mx].value = actor.value
+      nextCells[actor.y][actor.x].value = actor.value
     })
     setCells(nextCells)
   }, [actors])
 
   const handleDown = React.useCallback(() => {
     const amanda = actors[0]
-    amanda.y = amanda.y + 1
-    setActors([
-      amanda,
-    ])
+    const bottom = cells.length
+    const canMove = amanda.y + 1 < bottom
+    if (!canMove) {
+      console.log('dang')
+    } else {
+      amanda.y = amanda.y + 1
+      setActors([
+        amanda,
+      ])
+    }
   }, [actors])
 
   const handleRight = React.useCallback(() => {
     const amanda = actors[0]
-    amanda.x = amanda.x + 1
-    setActors([
-      amanda,
-    ])
+    const right = cells[0].length
+    const canMove = amanda.x + 1 < right
+    if (canMove) {
+      amanda.x = amanda.x + 1
+      setActors([
+        amanda,
+      ])
+    }
   }, [actors])
 
   const handleLeft = React.useCallback(() => {
     const amanda = actors[0]
-    amanda.x = amanda.x - 1
-    setActors([
-      amanda,
-    ])
+    const left = 0
+    const canMove = amanda.x - 1 >= left
+    if (canMove) {
+      amanda.x = amanda.x - 1
+      setActors([
+        amanda,
+      ])
+    }
   }, [actors])
 
   const keydownHandler = React.useCallback((event: KeyboardEvent) => {
@@ -87,7 +101,7 @@ const App: React.FC = () => {
           break
         default:
       }
-    }, [handleDown])
+    }, [handleDown, handleLeft, handleRight])
 
   React.useEffect(() => {
     // only responsible for adding/removing handler

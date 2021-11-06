@@ -2,5 +2,5 @@
 
 ## Plan
 
-* move an item with keyboard
-* move an item on a timer
+* when item hits bottom, stop
+* when item stops, create another
