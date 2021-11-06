@@ -1,0 +1,18 @@
+.App {
+  margin: auto;
+}
+
+.Grid {
+}
+
+.Row {
+  display: flex;
+  justify-content: center;
+}
+
+.Cell {
+  width: 25px;
+  height: 25px;
+  border: 1px solid black;
+  font-size: 0.5em;
+}
