@@ -23,3 +23,6 @@ export type Actor = Cell & {
   isActive: boolean,
   orientation: Orientation,
 }
+
+type CellMapValue = 0 | 1 | 2
+export type CellMap = CellMapValue[][]
