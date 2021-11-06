@@ -1,5 +1,5 @@
 import React from 'react';
-import * as types from './types';
+import * as types from '../types';
 
 type CellProps = {
   value: types.Cell['value'];

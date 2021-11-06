@@ -1,8 +1,9 @@
 import React from 'react';
-import './App.css';
+import {setCellsForActor} from '../actor';
+import '../App.css';
 import Grid from './Grid';
-import * as types from './types';
-import {canMoveDown, canMoveLeft, canMoveRight, setCellsForActor} from './util';
+import * as types from '../types';
+import {canMoveDown, canMoveLeft, canMoveRight, rotate} from '../util';
 
 const initalCells: types.Cells = []
 const rows = 14
@@ -38,6 +39,7 @@ const newActor = (): types.Actor => ({
   mx: 0,
   my: 0,
   isActive: true,
+  orientation: types.Orientation.north,
 })
 
 const App: React.FC = () => {
@@ -93,6 +95,10 @@ const App: React.FC = () => {
     }
   }, [activeActor, cells])
 
+  const handleUp = React.useCallback(() => {
+    setActiveActor(rotate(activeActor))
+  }, [activeActor])
+
   const keydownHandler = React.useCallback((event: KeyboardEvent) => {
       switch (event.key) {
         case 'ArrowDown':
@@ -109,6 +115,11 @@ const App: React.FC = () => {
         case 'h':
         case 'a':
           handleLeft()
+          break
+        case 'ArrowUp':
+        case 'k':
+        case 'w':
+          handleUp()
           break
         default:
       }
