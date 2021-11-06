@@ -8,6 +8,7 @@ export type Cell = Coords & {
 }
 
 export type Cells = Cell[][]
+export type Grid = Cells
 
 export type Actor = Cell & {
   mx: number;

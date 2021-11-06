@@ -2,10 +2,11 @@ import React from 'react';
 import './App.css';
 import Grid from './Grid';
 import * as types from './types';
+import {canMoveDown, setCellsForActor} from './util';
 
 const initalCells: types.Cells = []
-const rows = 10
-const cols = 8
+const rows = 25
+const cols = 18
 while (initalCells.length < rows) {
   const row = []
   while (row.length < cols) {
@@ -44,11 +45,12 @@ const App: React.FC = () => {
   const [actors, setActors] = React.useState<types.Actor[]>([])
 
   React.useEffect(() => {
-    const nextCells: types.Cells = clearGrid(cells)
+    let nextCells: types.Cells = clearGrid(cells)
     actors.forEach((actor) => {
-      nextCells[actor.y][actor.x].value = actor.value
+      nextCells = setCellsForActor(nextCells, actor)
     })
-    nextCells[activeActor.y][activeActor.x].value = activeActor.value
+    // set cells for actor
+    nextCells = setCellsForActor(nextCells, activeActor)
     setCells(nextCells)
   }, [activeActor, actors/*, cells*/])
 
@@ -58,14 +60,8 @@ const App: React.FC = () => {
   }, [actors])
 
   const handleDown = React.useCallback(() => {
-    const bottom = cells.length
     const nextY = activeActor.y + 1
-    const nextRow = cells[nextY]
-    const nextRowExists = nextRow !== undefined
-    const nextCellEmpty = nextRowExists && nextRow[activeActor.x].value === undefined
-    const canMove = nextY < bottom
-      && nextCellEmpty
-    if (!canMove) {
+    if (!canMoveDown(cells, activeActor)) {
       stopControl(activeActor)
     } else {
       setActiveActor({
@@ -73,7 +69,7 @@ const App: React.FC = () => {
         y: nextY,
       })
     }
-  }, [activeActor, cells.length, stopControl])
+  }, [activeActor, cells, stopControl])
 
   const handleRight = React.useCallback(() => {
     const actor = activeActor
