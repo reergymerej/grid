@@ -13,4 +13,5 @@ export type Grid = Cells
 export type Actor = Cell & {
   mx: number;
   my: number;
+  isActive: boolean,
 }

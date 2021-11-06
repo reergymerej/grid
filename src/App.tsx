@@ -2,11 +2,11 @@ import React from 'react';
 import './App.css';
 import Grid from './Grid';
 import * as types from './types';
-import {canMoveDown, setCellsForActor} from './util';
+import {canMoveDown, canMoveLeft, canMoveRight, setCellsForActor} from './util';
 
 const initalCells: types.Cells = []
-const rows = 25
-const cols = 18
+const rows = 14
+const cols = 9
 while (initalCells.length < rows) {
   const row = []
   while (row.length < cols) {
@@ -33,10 +33,11 @@ const clearGrid = (grid: types.Cells): types.Cells => {
 
 const newActor = (): types.Actor => ({
   value: 'amanda',
-  x: 0,
-  y: 0,
+  x: Math.floor(cols/2),
+  y: 2,
   mx: 0,
   my: 0,
+  isActive: true,
 })
 
 const App: React.FC = () => {
@@ -55,6 +56,7 @@ const App: React.FC = () => {
   }, [activeActor, actors/*, cells*/])
 
   const stopControl = React.useCallback((actor: types.Actor) => {
+    actor.isActive =  false
     setActors([...actors, actor])
     setActiveActor(newActor())
   }, [actors])
@@ -71,39 +73,41 @@ const App: React.FC = () => {
     }
   }, [activeActor, cells, stopControl])
 
-  const handleRight = React.useCallback(() => {
-    const actor = activeActor
-    const right = cells[0].length
-    const canMove = actor.x + 1 < right
-    if (canMove) {
+  const handleLeft = React.useCallback(() => {
+    const nextX = activeActor.x - 1
+    if (canMoveLeft(cells, activeActor)) {
       setActiveActor({
         ...activeActor,
-        x: activeActor.x + 1
+        x: nextX,
       })
     }
   }, [activeActor, cells])
 
-  const handleLeft = React.useCallback(() => {
-    const actor = activeActor
-    const left = 0
-    const canMove = actor.x - 1 >= left
-    if (canMove) {
+  const handleRight = React.useCallback(() => {
+    const nextX = activeActor.x + 1
+    if (canMoveRight(cells, activeActor)) {
       setActiveActor({
         ...activeActor,
-        x: activeActor.x - 1
+        x: nextX,
       })
     }
-  }, [activeActor])
+  }, [activeActor, cells])
 
   const keydownHandler = React.useCallback((event: KeyboardEvent) => {
       switch (event.key) {
         case 'ArrowDown':
+        case 'j':
+        case 's':
           handleDown()
           break
         case 'ArrowRight':
+        case 'l':
+        case 'd':
           handleRight()
           break
         case 'ArrowLeft':
+        case 'h':
+        case 'a':
           handleLeft()
           break
         default:

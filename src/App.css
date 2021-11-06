@@ -12,13 +12,14 @@
 }
 
 .Cell {
-  width: 25px;
-  height: 25px;
-  border: 1px solid black;
-  font-size: 0.5em;
+  width: 30px;
+  height: 30px;
+  font-size: 9px;
   text-align: center;
   overflow: hidden;
-  line-height: 25px;
+  color: gray;
+  border: 1px solid black;
+  border-color: rgba(0, 0, 0, 0);
 }
 
 .dot {
@@ -29,6 +30,8 @@
   background-color: orange;
 }
 
-.bloop {
-  background-color: #09f;
+.collision {
+  border: 1px dotted #09f;
+  color: black;
+  font-weight: bold;
 }
