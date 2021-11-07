@@ -27,34 +27,22 @@ const getBottomNorth = (actor: types.Actor): types.Cell[] => {
   return result
 }
 
-const getLeftNorth = (actor: types.Actor): types.Cell[] => {
-  // return [
-  //   {
-  //     value: 'collision',
-  //     x: actor.x - 1,
-  //     y: actor.y,
-  //   },
-  //   {
-  //     value: 'collision',
-  //     x: actor.x - 1,
-  //     y: actor.y + 1,
-  //   },
-  //   {
-  //     value: 'collision',
-  //     x: actor.x - 1,
-  //     y: actor.y + 2,
-  //   },
-  // ]
+const getFurthestXNorth = (direction: number) => (actor: types.Actor): types.Cell[] => {
   const center = getCenter(ell)
   const relativeMap = getRelativeMap(ell, center)
   // key is y
   const furthestPerRow: {[key: string]: number} = {}
+  const isFurther = (value: number, basis: number) => {
+    return direction > 0
+      ? value > basis
+      : value < basis
+  }
   relativeMap.forEach(coords => {
     const currentFurthest = furthestPerRow[coords.y]
     if (currentFurthest === undefined) {
       furthestPerRow[coords.y] = coords.x
     } else {
-      if (coords.y < currentFurthest) {
+      if (isFurther(coords.y, currentFurthest)) {
         furthestPerRow[coords.y] = coords.x
       }
     }
@@ -64,12 +52,15 @@ const getLeftNorth = (actor: types.Actor): types.Cell[] => {
     const x = furthestPerRow[y]
     return {
       value: 'collision',
-      x: actor.x + x - 1,
+      x: actor.x + x + direction,
       y: actor.y + parseInt(y),
     }
   })
   return result
 }
+
+const getLeftNorth = getFurthestXNorth(-1)
+const getRightNorth = getFurthestXNorth(1)
 
 export const getActorCollisionBottom = (actor: types.Actor): types.Cell[] => {
   switch (actor.orientation) {
@@ -108,30 +99,19 @@ export const getActorCollisionLeft = (actor: types.Actor): types.Cell[] => {
 }
 
 export const getActorCollisionRight = (actor: types.Actor): types.Cell[] => {
-  return [
-    {
-      value: 'collision',
-      x: actor.x + 1,
-      y: actor.y,
-    },
-    {
-      value: 'collision',
-      x: actor.x + 1,
-      y: actor.y + 1,
-    },
-    {
-      value: 'collision',
-      x: actor.x + 2,
-      y: actor.y + 2,
-    },
-  ]
+  switch (actor.orientation) {
+    case types.Orientation.north:
+      return getRightNorth(actor)
+    default:
+      throw new Error(`unhandled case "${types.Orientation[actor.orientation]}"`)
+  }
 }
 
 const showCollisionZones = (grid: types.Grid, actor: types.Actor): types.Grid => {
   const zones: types.Cell[][] = [
     getActorCollisionBottom(actor),
     getActorCollisionLeft(actor),
-    // getActorCollisionRight(actor),
+    getActorCollisionRight(actor),
   ]
   zones.forEach((zone) => {
     zone.forEach((cell) => {
