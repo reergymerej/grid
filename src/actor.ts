@@ -186,16 +186,26 @@ export const setCellsForActor = (grid: types.Grid, actor: types.Actor): types.Gr
 }
 
 const getRandomShape = (): types.Shape => {
-  const shapes = [
+  const items = [
     types.Shape.ess,
     types.Shape.ell,
     types.Shape.tee,
   ]
-  return getRandomItem(shapes)
+  return getRandomItem(items)
+}
+
+const getRandomColor = (): string => {
+  const items = [
+    'jeremy',
+    'amanda',
+    'sammy',
+    'jemma',
+  ]
+  return getRandomItem(items)
 }
 
 export const newActor = (): types.Actor => ({
-  value: 'amanda',
+  value: getRandomColor(),
   x: Math.floor(cols/2),
   y: 2,
   mx: 0,

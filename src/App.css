@@ -22,8 +22,16 @@
   border-color: rgba(0, 0, 0, 0);
 }
 
-.dot {
-  background-color: red;
+.jeremy {
+  background-color: #09f;
+}
+
+.jemma {
+  background-color: #ff41c4;
+}
+
+.sammy {
+  background-color: #9dff00;
 }
 
 .amanda {
