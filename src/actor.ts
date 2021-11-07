@@ -128,9 +128,18 @@ const getRelativeMap = (shape: types.CellMap, center: types.Coords): types.Coord
   return result
 }
 
+const derefArray = (arr: any[][]): any[][] => {
+  const result: any[][] = []
+  arr.forEach((row) => {
+    const newRow = [...row]
+    result.push(newRow)
+  })
+  return result
+}
+
 const getRotatedActor = (actor: types.Actor, shape: types.CellMap = ell): types.CellMap => {
-  // TODO: DEREFERENCE shape! so we don't rotate each the original shape
-  let rotated = shape
+  let rotated = derefArray(shape)
+
   switch (actor.orientation) {
     case types.Orientation.north:
       break;

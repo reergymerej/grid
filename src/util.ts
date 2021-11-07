@@ -5,19 +5,25 @@ import * as types from './types';
 const cellIsAvailable = (cell: types.Cell): boolean => {
   return cell.value === undefined
     || cell.value === 'collision'
+    || cell.value === 'collision collision' // a cell my have collision twice
 }
 
-const canMoveIntoCollisionArea = (grid: types.Grid, collisionArea: types.Cell[]): boolean => {
+const isCollisionAreaClear = (grid: types.Grid, collisionArea: types.Cell[]): boolean => {
   let insideBoundary = true
-  let noCollisions = true
+  let hasCollisions = false
   for (let i = 0; i < collisionArea.length; i++) {
     const cell = collisionArea[i]
     const gridCell = gridReference(grid, cell.x, cell.y)
     insideBoundary = insideBoundary && gridCell !== undefined
     if (gridCell) {
-      noCollisions = noCollisions && cellIsAvailable(gridCell)
+      if (!cellIsAvailable(gridCell)) {
+        hasCollisions = hasCollisions || true
+      }
     }
-    if (!insideBoundary || !noCollisions) {
+    if (!insideBoundary) {
+      return false
+    }
+    if (hasCollisions) {
       return false
     }
   }
@@ -29,7 +35,7 @@ export const canMoveDown = (
   actor: types.Actor,
 ): boolean => {
     const collisionArea = getActorCollisionBottom(actor)
-    return canMoveIntoCollisionArea(grid, collisionArea)
+    return isCollisionAreaClear(grid, collisionArea)
 }
 
 export const canMoveLeft = (
@@ -37,7 +43,7 @@ export const canMoveLeft = (
   actor: types.Actor,
 ): boolean => {
     const collisionArea = getActorCollisionLeft(actor)
-    return canMoveIntoCollisionArea(grid, collisionArea)
+    return isCollisionAreaClear(grid, collisionArea)
 }
 
 export const canMoveRight = (
@@ -45,7 +51,7 @@ export const canMoveRight = (
   actor: types.Actor,
 ): boolean => {
     const collisionArea = getActorCollisionRight(actor)
-    return canMoveIntoCollisionArea(grid, collisionArea)
+    return isCollisionAreaClear(grid, collisionArea)
 }
 
 export const rotate = (actor: types.Actor): types.Actor => {

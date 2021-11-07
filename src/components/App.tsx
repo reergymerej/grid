@@ -6,7 +6,7 @@ import * as types from '../types';
 import {canMoveDown, canMoveLeft, canMoveRight, rotate} from '../util';
 
 const initalCells: types.Cells = []
-const rows = 14
+const rows = 9
 const cols = 9
 while (initalCells.length < rows) {
   const row = []
