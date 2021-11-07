@@ -1,18 +1,9 @@
 import {setCellIfPresent, setCellIfPresentByCell} from './grid';
 import * as types from './types';
 import {rotate} from './grid-util';
-
-const ell: types.CellMap = [
-  [ 1, 0 ],
-  [ 2, 0 ],
-  [ 1, 1 ],
-]
-
-const ess: types.CellMap = [
-  [ 1, 0 ],
-  [ 2, 1 ],
-  [ 0, 1 ],
-]
+import {getRandomItem} from './util';
+import {cols} from './config';
+import {ell, ess, tee} from './actors';
 
 const getBottom = (actor: types.Actor): types.Cell[] => {
   const rotated = getRotatedActor(actor)
@@ -149,6 +140,8 @@ const getActorShape = (actor: types.Actor): types.CellMap => {
       return ell
     case types.Shape.ess:
       return ess
+    case types.Shape.tee:
+      return tee
     default:
       throw new Error(`unhandled case "${types.Shape[actor.shape]}"`)
   }
@@ -191,3 +184,23 @@ export const setCellsForActor = (grid: types.Grid, actor: types.Actor): types.Gr
   }
   return grid
 }
+
+const getRandomShape = (): types.Shape => {
+  const shapes = [
+    types.Shape.ess,
+    types.Shape.ell,
+    types.Shape.tee,
+  ]
+  return getRandomItem(shapes)
+}
+
+export const newActor = (): types.Actor => ({
+  value: 'amanda',
+  x: Math.floor(cols/2),
+  y: 2,
+  mx: 0,
+  my: 0,
+  isActive: true,
+  orientation: types.Orientation.north,
+  shape: getRandomShape(),
+})

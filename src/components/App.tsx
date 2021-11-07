@@ -1,13 +1,12 @@
 import React from 'react';
-import {setCellsForActor} from '../actor';
+import {newActor, setCellsForActor} from '../actor';
 import '../App.css';
 import Grid from './Grid';
 import * as types from '../types';
 import {canMoveDown, canMoveLeft, canMoveRight, rotate} from '../util';
+import {rows, cols} from '../config';
 
 const initalCells: types.Cells = []
-const rows = 15
-const cols = 9
 while (initalCells.length < rows) {
   const row = []
   while (row.length < cols) {
@@ -31,24 +30,6 @@ const clearGrid = (grid: types.Cells): types.Cells => {
     })
   })
 }
-
-const getRandomShape = (): types.Shape => {
-  if (Math.random() <= 0.5) {
-    return types.Shape.ell
-  }
-  return types.Shape.ess
-}
-
-const newActor = (): types.Actor => ({
-  value: 'amanda',
-  x: Math.floor(cols/2),
-  y: 2,
-  mx: 0,
-  my: 0,
-  isActive: true,
-  orientation: types.Orientation.north,
-  shape: getRandomShape(),
-})
 
 const App: React.FC = () => {
   const [cells, setCells] = React.useState<types.Cells>(initalCells)
@@ -131,7 +112,7 @@ const App: React.FC = () => {
           break
         default:
       }
-    }, [handleDown, handleLeft, handleRight])
+    }, [handleDown, handleLeft, handleRight, handleUp])
 
   React.useEffect(() => {
     // only responsible for adding/removing handler

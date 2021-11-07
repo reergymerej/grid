@@ -2,6 +2,17 @@ import {getActorCollisionBottom, getActorCollisionLeft, getActorCollisionRight} 
 import {gridReference} from './grid';
 import * as types from './types';
 
+export const rand = (min: number, max: number): number => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+export const getRandomItem = <T = any>(items: T[]): T => {
+  const i = rand(0, items.length - 1)
+  return items[i]
+}
+
 const cellIsAvailable = (cell: types.Cell): boolean => {
   return cell.value === undefined
     || cell.value === 'collision'
