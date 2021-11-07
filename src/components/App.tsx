@@ -32,6 +32,13 @@ const clearGrid = (grid: types.Cells): types.Cells => {
   })
 }
 
+const getRandomShape = (): types.Shape => {
+  if (Math.random() <= 0.5) {
+    return types.Shape.ell
+  }
+  return types.Shape.ess
+}
+
 const newActor = (): types.Actor => ({
   value: 'amanda',
   x: Math.floor(cols/2),
@@ -39,8 +46,8 @@ const newActor = (): types.Actor => ({
   mx: 0,
   my: 0,
   isActive: true,
-  orientation: types.Orientation.east,
-  shape: types.Shape.ell,
+  orientation: types.Orientation.north,
+  shape: getRandomShape(),
 })
 
 const App: React.FC = () => {

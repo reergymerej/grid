@@ -1,3 +1,8 @@
+export enum Shape {
+  ell,
+  ess,
+}
+
 export type Coords = {
   x: number,
   y: number,
@@ -15,10 +20,6 @@ export enum Orientation {
   east,
   south,
   west,
-}
-
-export enum Shape {
-  ell,
 }
 
 export type Actor = Cell & {

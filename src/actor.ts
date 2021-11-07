@@ -2,6 +2,18 @@ import {setCellIfPresent, setCellIfPresentByCell} from './grid';
 import * as types from './types';
 import {rotate} from './grid-util';
 
+const ell: types.CellMap = [
+  [ 1, 0 ],
+  [ 2, 0 ],
+  [ 1, 1 ],
+]
+
+const ess: types.CellMap = [
+  [ 1, 0 ],
+  [ 2, 1 ],
+  [ 0, 1 ],
+]
+
 const getBottom = (actor: types.Actor): types.Cell[] => {
   const rotated = getRotatedActor(actor)
   const center = getCenter(rotated)
@@ -91,12 +103,6 @@ const showCollisionZones = (grid: types.Grid, actor: types.Actor): types.Grid =>
   return grid
 }
 
-const ell: types.CellMap = [
-  [ 1, 0 ],
-  [ 2, 0 ],
-  [ 1, 1 ],
-]
-
 const getCenter = (shape: types.CellMap): types.Coords => {
   for (let y = 0; y < shape.length; y++) {
     const row = shape[y]
@@ -141,6 +147,8 @@ const getActorShape = (actor: types.Actor): types.CellMap => {
   switch (actor.shape) {
     case types.Shape.ell:
       return ell
+    case types.Shape.ess:
+      return ess
     default:
       throw new Error(`unhandled case "${types.Shape[actor.shape]}"`)
   }
