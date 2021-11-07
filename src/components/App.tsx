@@ -39,7 +39,7 @@ const newActor = (): types.Actor => ({
   mx: 0,
   my: 0,
   isActive: true,
-  orientation: types.Orientation.north,
+  orientation: types.Orientation.east,
 })
 
 const App: React.FC = () => {

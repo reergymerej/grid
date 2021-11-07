@@ -1,9 +1,11 @@
 import {setCellIfPresent, setCellIfPresentByCell} from './grid';
 import * as types from './types';
+import {rotate} from './grid-util';
 
-const getBottomNorth = (actor: types.Actor): types.Cell[] => {
-  const center = getCenter(ell)
-  const relativeMap = getRelativeMap(ell, center)
+const getBottom = (actor: types.Actor): types.Cell[] => {
+  const rotated = getRotatedActor(actor)
+  const center = getCenter(rotated)
+  const relativeMap = getRelativeMap(rotated, center)
   // key is x
   const lowestRowPerColumn: {[key: string]: number} = {}
   relativeMap.forEach(coords => {
@@ -27,9 +29,10 @@ const getBottomNorth = (actor: types.Actor): types.Cell[] => {
   return result
 }
 
-const getFurthestXNorth = (direction: number) => (actor: types.Actor): types.Cell[] => {
-  const center = getCenter(ell)
-  const relativeMap = getRelativeMap(ell, center)
+const getFurthestX = (direction: number) => (actor: types.Actor): types.Cell[] => {
+  const rotated = getRotatedActor(actor)
+  const center = getCenter(rotated)
+  const relativeMap = getRelativeMap(rotated, center)
   // key is y
   const furthestPerRow: {[key: string]: number} = {}
   const isFurther = (value: number, basis: number) => {
@@ -42,7 +45,7 @@ const getFurthestXNorth = (direction: number) => (actor: types.Actor): types.Cel
     if (currentFurthest === undefined) {
       furthestPerRow[coords.y] = coords.x
     } else {
-      if (isFurther(coords.y, currentFurthest)) {
+      if (isFurther(coords.x, currentFurthest)) {
         furthestPerRow[coords.y] = coords.x
       }
     }
@@ -59,52 +62,19 @@ const getFurthestXNorth = (direction: number) => (actor: types.Actor): types.Cel
   return result
 }
 
-const getLeftNorth = getFurthestXNorth(-1)
-const getRightNorth = getFurthestXNorth(1)
+const getLeft = getFurthestX(-1)
+const getRight = getFurthestX(1)
 
 export const getActorCollisionBottom = (actor: types.Actor): types.Cell[] => {
-  switch (actor.orientation) {
-    case types.Orientation.north:
-      return getBottomNorth(actor)
-    case types.Orientation.east:
-      return [
-          {
-            value: 'collision',
-            x: actor.x,
-            y: actor.y + 1,
-          },
-          {
-            value: 'collision',
-            x: actor.x + 1,
-            y: actor.y + 1,
-          },
-          {
-            value: 'collision',
-            x: actor.x - 1,
-            y: actor.y + 2,
-          },
-    ]
-    default:
-      throw new Error(`unhandled case "${types.Orientation[actor.orientation]}"`)
-  }
+  return getBottom(actor)
 }
 
 export const getActorCollisionLeft = (actor: types.Actor): types.Cell[] => {
-  switch (actor.orientation) {
-    case types.Orientation.north:
-      return getLeftNorth(actor)
-    default:
-      throw new Error(`unhandled case "${types.Orientation[actor.orientation]}"`)
-  }
+  return getLeft(actor)
 }
 
 export const getActorCollisionRight = (actor: types.Actor): types.Cell[] => {
-  switch (actor.orientation) {
-    case types.Orientation.north:
-      return getRightNorth(actor)
-    default:
-      throw new Error(`unhandled case "${types.Orientation[actor.orientation]}"`)
-  }
+  return getRight(actor)
 }
 
 const showCollisionZones = (grid: types.Grid, actor: types.Actor): types.Grid => {
@@ -158,27 +128,36 @@ const getRelativeMap = (shape: types.CellMap, center: types.Coords): types.Coord
   return result
 }
 
-// WARNING: mutates grid
-export const setCellsForActor = (grid: types.Grid, actor: types.Actor): types.Grid => {
+const getRotatedActor = (actor: types.Actor, shape: types.CellMap = ell): types.CellMap => {
+  // TODO: DEREFERENCE shape! so we don't rotate each the original shape
+  let rotated = shape
   switch (actor.orientation) {
-    case types.Orientation.north: {
-        const center = getCenter(ell)
-        const relativeMap = getRelativeMap(ell, center)
-        relativeMap.forEach(({x, y}) => {
-          grid = setCellIfPresent(grid, actor.x + x, actor.y + y, actor.value)
-        })
-      }
-      break
-
+    case types.Orientation.north:
+      break;
     case types.Orientation.east:
-        grid = setCellIfPresent(grid, actor.x, actor.y, actor.value)
-        grid = setCellIfPresent(grid, actor.x - 1, actor.y, actor.value)
-        grid = setCellIfPresent(grid, actor.x - 1, actor.y + 1, actor.value)
-        grid = setCellIfPresent(grid, actor.x + 1, actor.y, actor.value)
-        break
+      rotated = rotate(ell, 90)
+      break;
+    case types.Orientation.south:
+      rotated = rotate(ell, 180)
+      break;
+    case types.Orientation.west:
+      rotated = rotate(ell, 270)
+      break;
     default:
       throw new Error(`unhandled case "${types.Orientation[actor.orientation]}"`)
   }
+  return rotated
+}
+
+// WARNING: mutates grid
+export const setCellsForActor = (grid: types.Grid, actor: types.Actor): types.Grid => {
+  // TODO: specify actor shape, don't assume ell
+  const rotated = getRotatedActor(actor)
+  const center = getCenter(rotated)
+  const relativeMap = getRelativeMap(rotated, center)
+  relativeMap.forEach(({x, y}) => {
+    grid = setCellIfPresent(grid, actor.x + x, actor.y + y, actor.value)
+  })
 
   const shouldShowCollisionZone = actor.isActive
   if (shouldShowCollisionZone) {
