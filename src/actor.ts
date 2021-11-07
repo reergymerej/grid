@@ -137,20 +137,30 @@ const derefArray = (arr: any[][]): any[][] => {
   return result
 }
 
-const getRotatedActor = (actor: types.Actor, shape: types.CellMap = ell): types.CellMap => {
+const getActorShape = (actor: types.Actor): types.CellMap => {
+  switch (actor.shape) {
+    case types.Shape.ell:
+      return ell
+    default:
+      throw new Error(`unhandled case "${types.Shape[actor.shape]}"`)
+  }
+}
+
+const getRotatedActor = (actor: types.Actor): types.CellMap => {
+  const shape = getActorShape(actor)
   let rotated = derefArray(shape)
 
   switch (actor.orientation) {
     case types.Orientation.north:
       break;
     case types.Orientation.east:
-      rotated = rotate(ell, 90)
+      rotated = rotate(shape, 90)
       break;
     case types.Orientation.south:
-      rotated = rotate(ell, 180)
+      rotated = rotate(shape, 180)
       break;
     case types.Orientation.west:
-      rotated = rotate(ell, 270)
+      rotated = rotate(shape, 270)
       break;
     default:
       throw new Error(`unhandled case "${types.Orientation[actor.orientation]}"`)
@@ -160,7 +170,6 @@ const getRotatedActor = (actor: types.Actor, shape: types.CellMap = ell): types.
 
 // WARNING: mutates grid
 export const setCellsForActor = (grid: types.Grid, actor: types.Actor): types.Grid => {
-  // TODO: specify actor shape, don't assume ell
   const rotated = getRotatedActor(actor)
   const center = getCenter(rotated)
   const relativeMap = getRelativeMap(rotated, center)

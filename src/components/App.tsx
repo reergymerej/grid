@@ -6,7 +6,7 @@ import * as types from '../types';
 import {canMoveDown, canMoveLeft, canMoveRight, rotate} from '../util';
 
 const initalCells: types.Cells = []
-const rows = 9
+const rows = 15
 const cols = 9
 while (initalCells.length < rows) {
   const row = []
@@ -40,6 +40,7 @@ const newActor = (): types.Actor => ({
   my: 0,
   isActive: true,
   orientation: types.Orientation.east,
+  shape: types.Shape.ell,
 })
 
 const App: React.FC = () => {

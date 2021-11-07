@@ -17,11 +17,16 @@ export enum Orientation {
   west,
 }
 
+export enum Shape {
+  ell,
+}
+
 export type Actor = Cell & {
   mx: number;
   my: number;
   isActive: boolean,
   orientation: Orientation,
+  shape: Shape,
 }
 
 type CellMapValue = 0 | 1 | 2
