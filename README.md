@@ -7,3 +7,5 @@
 * check for collisions that block rotation
   * including rotating off screen
 * clear lines when finished
+
+aws s3 sync . s3://tetris.reergymerej.com --profile jex --acl public-read*
