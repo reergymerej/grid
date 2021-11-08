@@ -2,8 +2,8 @@ import {setCellIfPresent, setCellIfPresentByCell} from './grid';
 import * as types from './types';
 import {rotate} from './grid-util';
 import {getRandomItem} from './util';
-import {cols} from './config';
-import {ell, ess, tee} from './actors';
+import {cols, showCollision} from './config';
+import {bone, ell, ess, tee} from './actors';
 
 const getBottom = (actor: types.Actor): types.Cell[] => {
   const rotated = getRotatedActor(actor)
@@ -142,6 +142,8 @@ const getActorShape = (actor: types.Actor): types.CellMap => {
       return ess
     case types.Shape.tee:
       return tee
+    case types.Shape.bone:
+      return bone
     default:
       throw new Error(`unhandled case "${types.Shape[actor.shape]}"`)
   }
@@ -178,7 +180,7 @@ export const setCellsForActor = (grid: types.Grid, actor: types.Actor): types.Gr
     grid = setCellIfPresent(grid, actor.x + x, actor.y + y, actor.value)
   })
 
-  const shouldShowCollisionZone = actor.isActive
+  const shouldShowCollisionZone = showCollision && actor.isActive
   if (shouldShowCollisionZone) {
     grid = showCollisionZones(grid, actor)
   }
@@ -190,16 +192,17 @@ const getRandomShape = (): types.Shape => {
     types.Shape.ess,
     types.Shape.ell,
     types.Shape.tee,
+    types.Shape.bone,
   ]
   return getRandomItem(items)
 }
 
 const getRandomColor = (): string => {
   const items = [
-    'jeremy',
-    'amanda',
-    'sammy',
-    'jemma',
+    'actor-jeremy',
+    'actor-amanda',
+    'actor-sammy',
+    'actor-jemma',
   ]
   return getRandomItem(items)
 }

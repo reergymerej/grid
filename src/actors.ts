@@ -17,6 +17,13 @@ export const tee: types.CellMap = [
   [ 1, 2, 1 ],
 ]
 
+export const bone: types.CellMap = [
+  [ 0, 1, 0 ],
+  [ 0, 2, 0 ],
+  [ 0, 1, 0 ],
+  [ 0, 1, 0 ],
+]
+
 // add to types.Shape
 // and getRandomShape
 // getActorShape

@@ -2,6 +2,7 @@ export enum Shape {
   ell,
   ess,
   tee,
+  bone,
 }
 
 export type Coords = {

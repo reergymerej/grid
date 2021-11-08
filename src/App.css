@@ -22,19 +22,26 @@
   border-color: rgba(0, 0, 0, 0);
 }
 
-.jeremy {
+[class*="actor"] {
+  border: 1px solid black;
+  border-color: rgba(0, 0, 0, 0);
+  border-left-color: black;
+  border-bottom-color: black;
+}
+
+.actor-jeremy {
   background-color: #09f;
 }
 
-.jemma {
+.actor-jemma {
   background-color: #ff41c4;
 }
 
-.sammy {
+.actor-sammy {
   background-color: #9dff00;
 }
 
-.amanda {
+.actor-amanda {
   background-color: orange;
 }
 

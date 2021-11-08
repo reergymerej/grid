@@ -1,4 +1,5 @@
 import React from 'react';
+import {showCoords} from '../config';
 import * as types from '../types';
 
 type CellProps = {
@@ -26,7 +27,7 @@ const Row: React.FC<RowProps> = ({cells}) => {
           key={cell.x}
           value={cell.value}
         >
-          {cell.x}, {cell.y}
+          {showCoords && `${cell.x}, {cell.y}`}
         </Cell>
       ))}
     </div>
