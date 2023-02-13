@@ -1,4 +1,4 @@
-export const rows = 15
-export const cols = 9
+export const rows = 16
+export const cols = 11
 export const showCollision = false
-export const showCoords = false
+export const showCoords = true

@@ -27,7 +27,7 @@ const Row: React.FC<RowProps> = ({cells}) => {
           key={cell.x}
           value={cell.value}
         >
-          {showCoords && `${cell.x}, {cell.y}`}
+          {showCoords && `${cell.x}, ${cell.y}`}
         </Cell>
       ))}
     </div>
